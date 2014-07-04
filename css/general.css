@@ -1,0 +1,6 @@
+.ext-epd-editable-field:hover {
+	padding: 10px;
+	border: 1px solid #DDD;
+	background: #EEE;
+	cursor: pointer;
+}

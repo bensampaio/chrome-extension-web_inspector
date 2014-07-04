@@ -1,0 +1,20 @@
+{
+
+	"manifest_version" : 2,
+	"name" : "Edit Page Data",
+	"version" : "0.1",
+	"author" : "Bruno Sampaio",
+
+	"default_locale" : "en",
+	"description" : "",
+	"icons" : {},
+
+	"content_scripts" : [
+		{
+			"matches" : [ "http://*", "https://*" ],
+			"css" : [ "css/general.css" ],
+			"js" : [ "js/jquery.js", "js/init.js" ]
+		}
+	]
+
+}
