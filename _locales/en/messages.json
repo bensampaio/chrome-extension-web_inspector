@@ -1,0 +1,33 @@
+{
+	"fieldWidthLabel" : {
+		"message" : "Width"
+	},
+
+	"fieldHeightLabel" : {
+		"message" : "Height"
+	},
+
+	"fieldSourceLabel" : {
+		"message" : "Source"
+	},
+
+	"fieldDescLabel" : {
+		"message" : "Description"
+	},
+
+	"fieldLangLabel" : {
+		"message" : "Language"
+	},
+
+	"fieldFontLabel" : {
+		"message" : "Font"
+	},
+
+	"fieldFSizeLabel" : {
+		"message" : "Size"
+	},
+
+	"fieldColorLabel" : {
+		"message" : "Color"
+	}
+}
