@@ -2,11 +2,21 @@
 	cursor: pointer !important;
 }
 
+.chrome-extension-wi-active .chrome-extension-wi-element:hover {
+	background-color: #F8F8F8;
+}
+
 .chrome-extension-wi-content_box {
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+	font-size : 13px;
+	line-height: 1.5em;
+	text-align: left;
 	min-width: 350px;
 	top: 0;
 	left: 0;
 	position: absolute;
+	padding: 0;
+	margin: 0;
 	border: 10px solid #EEE;
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
@@ -20,9 +30,11 @@
 
 .chrome-extension-wi-content_box > .chrome-extension-wi-data_box {
 	width: 100%;
+	padding: 0;
 	padding-top: 5px;
+	margin: 0;
 	background: #EEE;
-	text-align: left;
+	color: #000;
 }
 
 .chrome-extension-wi-content_box > .chrome-extension-wi-data_box label {
@@ -30,11 +42,10 @@
 	margin-right: 5px;
 }
 
-.chrome-extension-wi-content_box > .chrome-extension-wi-data_box label,
-.chrome-extension-wi-content_box > .chrome-extension-wi-data_box span {
-	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-	font-size : 13px;
-	line-height: 1.3em;
-	color: #000;
+.chrome-extension-wi-content_box > .chrome-extension-wi-data_box * {
 	background: transparent;
+}
+
+.chrome-extension-wi-content_box > .chrome-extension-wi-data_box a {
+	word-break: break-all;
 }

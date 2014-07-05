@@ -14,7 +14,7 @@ var wi = {
 	},
 
 	elements : {
-		CONTENT : [ 'ARTICLE', 'ASIDE', 'DIV', 'FIELDSET', 'FOOTER', 'FORM', 'HEADER', 'MAIN', 'NAV', 'OL', 'SECTION', 'SPAN', 'TABLE', 'UL' ],
+		CONTENT : [ 'ARTICLE', 'ASIDE', 'DIV', 'FIELDSET', 'FOOTER', 'FORM', 'HEADER', 'MAIN', 'NAV', 'OL', 'SECTION', 'TABLE', 'UL' ],
 		FORM : [ 'BUTTON', 'INPUT', 'KEYGEN', 'OUTPUT', 'SELECT', 'TEXTAREA' ],
 		GAME : [ 'CANVAS' ],
 		MULTIMEDIA : [ 'AUDIO', 'IMG', 'VIDEO' ],
@@ -32,7 +32,7 @@ var wi = {
 			'MARK',
 			'P', 'PRE',
 			'Q',
-			'S', 'SAMP', 'SMALL', 'STRONG', 'SUB', 'SUMMARY', 'SUP',
+			'S', 'SAMP', 'SMALL', 'SPAN', 'STRONG', 'SUB', 'SUMMARY', 'SUP',
 			'TIME', 'TH', 'TD',
 			'U',
 			'VAR'
@@ -41,8 +41,16 @@ var wi = {
 
 	init : function() {
 		var selector = this.elements.REFERENCE.join(',') + ',' + this.elements.TEXT.join(',') + ',' + this.elements.MULTIMEDIA.join(',');
+		var containers = this.elements.CONTENT.join(',');
 
+		// Remove Data Box when user clicks outside
+		$(document).on('click', function(event) {
+			wi.removeDataBox();
+		});
+
+		// Set Elements click event
 		$(selector)
+			.filter(':not(:has(' + containers + '))')
 			.addClass(wi.css.ELEMENT)
 			.on('click', function(event) {
 				if(wi.current.active) {
@@ -104,6 +112,11 @@ var wi = {
 			}
 		}
 		htmlMetadata+= '<form>';
+
+		// Set Content Box Events
+		contentBox.on('click', function(event) {
+			event.stopPropagation();
+		});
 
 		// Add Data Box to the Content Box
 		dataBox.append(htmlMetadata);
