@@ -27,7 +27,11 @@
 		"message" : "Size"
 	},
 
-	"fieldColorLabel" : {
-		"message" : "Color"
+	"fieldTextColorLabel" : {
+		"message" : "Text Color"
+	},
+
+	"fieldBackgroundImageLabel" : {
+		"message" : "Background Image"
 	}
 }

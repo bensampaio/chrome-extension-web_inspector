@@ -35,6 +35,7 @@
 	margin: 0;
 	background: #EEE;
 	color: #000;
+	border-top: 3px solid #E8E8E8;
 }
 
 .chrome-extension-wi-content_box > .chrome-extension-wi-data_box label {

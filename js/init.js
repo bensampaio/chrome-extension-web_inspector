@@ -45,7 +45,9 @@ var wi = {
 
 		// Remove Data Box when user clicks outside
 		$(document).on('click', function(event) {
-			wi.removeDataBox();
+			if(wi.current.active) {
+				wi.removeDataBox();
+			}
 		});
 
 		// Set Elements click event
@@ -104,7 +106,7 @@ var wi = {
 				htmlMetadata+= 
 					'<div class="' + this.css.DATA_FIELD + '">' +
 						'<label for="' + field.id + '">' + field.label + ':</label>' +
-						(field.id == 'src'?
+						(field.id.indexOf('src') != -1?
 							'<a href="' + field.value + '" target="_blank">' + field.value + '</a>' :
 							'<span>' + field.value + '</span>'
 						) +
@@ -149,10 +151,13 @@ var wi = {
 	},
 
 	getTextMetadata : function(domToInspect) {
+		var backgroundURL = this.utils.calculateSourceURL(domToInspect.css('background-image').replace('url(','').replace(')',''));
+
 		return [
 			{ id : 'font', label : chrome.i18n.getMessage("fieldFontLabel"), value : domToInspect.css('font-family') },
 			{ id : 'fsize', label : chrome.i18n.getMessage("fieldFSizeLabel"), value : domToInspect.css('font-size') },
-			{ id : 'color', label : chrome.i18n.getMessage("fieldColorLabel"), value : domToInspect.css('color') }
+			{ id : 'text-color', label : chrome.i18n.getMessage("fieldTextColorLabel"), value : domToInspect.css('color') },
+			{ id : 'image-src', label : chrome.i18n.getMessage("fieldBackgroundImageLabel"), value : backgroundURL }
 		]
 	},
 
@@ -174,7 +179,7 @@ var wi = {
 
 	utils : {
 		calculateSourceURL : function(url) {
-			if(url && url.substr(0, 4) != 'http') {
+			if(url && url.indexOf('://') == -1) {
 				url = window.location.protocol + '//' + window.location.host + (window.location.port? ':' + window.location.port : '' ) + '/' + url;
 			}
 
