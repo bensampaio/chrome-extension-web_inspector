@@ -7,7 +7,11 @@
 
 	"default_locale" : "en",
 	"description" : "",
-	"icons" : {},
+	"icons" : {
+		"16" : "img/logo16.png",
+		"48" : "img/logo48.png",
+		"128" : "img/logo128.png"
+	},
 
 	"background" : {
 		"scripts" : [ "js/background.js" ]

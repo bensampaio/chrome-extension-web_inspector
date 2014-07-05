@@ -1,5 +1,5 @@
 .chrome-extension-wi-active .chrome-extension-wi-element {
-	cursor: pointer !important;
+	cursor: -webkit-zoom-in !important;
 }
 
 .chrome-extension-wi-active .chrome-extension-wi-element:hover {
@@ -38,15 +38,47 @@
 	border-top: 3px solid #E8E8E8;
 }
 
-.chrome-extension-wi-content_box > .chrome-extension-wi-data_box label {
-	font-weight: bold;
-	margin-right: 5px;
-}
-
-.chrome-extension-wi-content_box > .chrome-extension-wi-data_box * {
+.chrome-extension-wi-content_box > .chrome-extension-wi-data_box > form,
+.chrome-extension-wi-content_box > .chrome-extension-wi-data_box > form > .chrome-extension-wi-data_field {
+	padding: 0;
+	margin: 0;
+	border: 0;
+	color: inherit;
+	display: block;
 	background: transparent;
 }
 
-.chrome-extension-wi-content_box > .chrome-extension-wi-data_box a {
+.chrome-extension-wi-content_box > .chrome-extension-wi-data_box > form > .chrome-extension-wi-data_field > label, 
+.chrome-extension-wi-content_box > .chrome-extension-wi-data_box > form > .chrome-extension-wi-data_field > span,
+.chrome-extension-wi-content_box > .chrome-extension-wi-data_box > form > .chrome-extension-wi-data_field > a {
+	color: inherit;
+	background: transparent;
+	display: inline;
+}
+
+.chrome-extension-wi-content_box > .chrome-extension-wi-data_box > form > .chrome-extension-wi-data_field > label {
+	font-weight: bold;
+	margin-right: 5px;
+	display: inline;
+
+}
+
+.chrome-extension-wi-content_box > .chrome-extension-wi-data_box > form > .chrome-extension-wi-data_field > a:link,
+.chrome-extension-wi-content_box > .chrome-extension-wi-data_box > form > .chrome-extension-wi-data_field > a:visited,
+.chrome-extension-wi-content_box > .chrome-extension-wi-data_box > form > .chrome-extension-wi-data_field > a:active,
+.chrome-extension-wi-content_box > .chrome-extension-wi-data_box > form > .chrome-extension-wi-data_field > a:hover {
 	word-break: break-all;
+	outline: none;
+	color: #0B64C0;
+}
+
+.chrome-extension-wi-content_box > .chrome-extension-wi-data_box > form > .chrome-extension-wi-data_field > a:link,
+.chrome-extension-wi-content_box > .chrome-extension-wi-data_box > form > .chrome-extension-wi-data_field > a:visited,
+.chrome-extension-wi-content_box > .chrome-extension-wi-data_box > form > .chrome-extension-wi-data_field > a:active {
+	text-decoration: none;
+}
+
+.chrome-extension-wi-content_box > .chrome-extension-wi-data_box > form > .chrome-extension-wi-data_field > a:hover {
+	text-decoration: underline;
+	cursor: pointer;
 }
