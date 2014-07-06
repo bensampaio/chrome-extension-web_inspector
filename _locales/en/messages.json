@@ -31,6 +31,10 @@
 		"message" : "Text Color"
 	},
 
+	"fieldBackgroundColorLabel" : {
+		"message" : "Background Color"
+	},
+
 	"fieldBackgroundImageLabel" : {
 		"message" : "Background Image"
 	}
