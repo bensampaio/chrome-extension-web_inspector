@@ -12,12 +12,14 @@
 	line-height: 1.5em;
 	text-align: left;
 	min-width: 350px;
-	top: 0;
-	left: 0;
-	position: absolute;
+	top: -100px;
+	left: -100px;
 	padding: 0;
 	margin: 0;
 	border: 10px solid #EEE;
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
 	border-radius: 10px;
@@ -25,17 +27,24 @@
 	-moz-box-shadow: 0px 0px 30px 0px rgba(50, 50, 50, 1);
 	box-shadow: 0px 0px 30px 0px rgba(50, 50, 50, 1);
 	background: transparent;
+	position: absolute;
 	z-index: 10000;
+}
+
+.chrome-extension-wi-content_box > .chrome-extension-wi-data_box,
+.chrome-extension-wi-content_box > .chrome-extension-wi-filler_box {
+	padding: 0;
+	margin: 0;
+	background: #EEE;
+	color: #000;
 }
 
 .chrome-extension-wi-content_box > .chrome-extension-wi-data_box {
 	width: 100%;
-	padding: 0;
-	padding-top: 5px;
-	margin: 0;
-	background: #EEE;
-	color: #000;
-	border-top: 3px solid #E8E8E8;
+}
+
+.chrome-extension-wi-content_box > .chrome-extension-wi-filler_box {
+	position: absolute;
 }
 
 .chrome-extension-wi-content_box > .chrome-extension-wi-data_box > form,

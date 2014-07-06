@@ -11,7 +11,8 @@ var wi = {
 		ELEMENT : 'chrome-extension-wi-element',
 		CONTENT_BOX_CLASS : 'chrome-extension-wi-content_box',
 		DATA_BOX_CLASS : 'chrome-extension-wi-data_box',
-		DATA_FIELD : 'chrome-extension-wi-data_field'
+		DATA_FIELD : 'chrome-extension-wi-data_field',
+		FILLER_BOX_CLASS : 'chrome-extension-wi-filler_box' 
 	},
 
 	elements : {
@@ -37,64 +38,72 @@ var wi = {
 			'TIME', 'TH', 'TD',
 			'U',
 			'VAR'
-		]
+		],
+
+		clickEvent : function(domsToInspect) {
+			domsToInspect
+				.addClass(wi.css.ELEMENT)
+				.on('click', function(event) {
+					if(wi.current.active) {
+						event.preventDefault();
+						event.stopPropagation();
+
+						// Remove existing box
+						wi.removeDataBox();
+
+						// Add new box
+						wi.addDataBox($(this));
+					}
+				});
+		}
 	},
 
 	init : function() {
 		var selector = wi.elements.REFERENCE.join(',') + ',' + wi.elements.TEXT.join(',') + ',' + wi.elements.MULTIMEDIA.join(',');
 		var containers = wi.elements.CONTENT.join(',');
+		var filter = ':not(:has(' + containers + '))';
 
 		// Remove Data Box when user clicks outside
-		$(document).on('click', function(event) {
-			if(wi.current.active) {
-				wi.removeDataBox();
-			}
-		});
+		$(document)
+			.on('click', function(event) {
+				if(wi.current.active) {
+					wi.removeDataBox();
+				}
+			})
+			.on('DOMNodeInserted', function(event) {
+				var domCreated = $(event.target);
+				var domsToInspect = $();
+
+				if(!domCreated.hasClass(wi.css.CONTENT_BOX_CLASS)) {
+					if(!domCreated.hasClass(wi.css.ELEMENT) && domCreated.is(selector) && domCreated.find(containers).length == 0) {
+						domsToInspect = domsToInspect.add(domCreated);
+					}
+
+					domsToInspect = domsToInspect.add(domCreated.find(selector).filter(filter).filter(':not(.' + wi.css.ELEMENT + ')'));
+
+					wi.elements.clickEvent(domsToInspect);
+				}
+				
+			});
 
 		// Move Data Box on scroll
-		$(window).on('scroll', function(event) {
+		$(window).on('resize scroll', function(event) {
 			if(wi.current.active && wi.current.dataBox.length > 0 && wi.current.element.length > 0) {
-				wi.calculateDataBoxPosition(wi.current.dataBox, wi.current.element);
+				wi.setDataBoxStyles(wi.current.dataBox, wi.current.element);
 			}
 		});
 
 		// Set Elements click event
-		$(selector)
-			.filter(':not(:has(' + containers + '))')
-			.addClass(wi.css.ELEMENT)
-			.on('click', function(event) {
-				if(wi.current.active) {
-					event.preventDefault();
-					event.stopPropagation();
-
-					// Remove existing box
-					wi.removeDataBox();
-
-					// Add new box
-					wi.addDataBox($(this));
-				}
-			});
+		wi.elements.clickEvent($(selector).filter(filter));
 	},
 
 	addDataBox : function(domToInspect) {
 		var contentBox = $('<div class="' + wi.css.CONTENT_BOX_CLASS + '"></div>');
 		var dataBox = $('<div class="' + wi.css.DATA_BOX_CLASS + '"></div>');
+		var fillerBox = $('<div class="' + wi.css.FILLER_BOX_CLASS + '"></div>');
 
 		var tagName = domToInspect[0].tagName;
 		var metadata = [];
-
-		// Set Content Box Position
-		wi.calculateDataBoxPosition(contentBox, domToInspect);
-
-		// Set Content Box Styles
-		contentBox.css({
-			width : (domToInspect.outerWidth() + 20) + 'px'
-		});
-
-		// Set Data Box Styles
-		dataBox.css({
-			marginTop : domToInspect.outerHeight() + 'px'
-		});
 
 		// Set Data Box Content
 		if(wi.elements.MULTIMEDIA.indexOf(tagName) != -1) {
@@ -131,21 +140,104 @@ var wi = {
 		// Add Data Box to the Content Box
 		dataBox.append(htmlMetadata);
 		contentBox.append(dataBox);
+		contentBox.append(fillerBox);
 
 		// Add Content Box to Document
 		$('body').append(contentBox);
+
+		// Set Content Box Styles
+		wi.setDataBoxStyles(contentBox, domToInspect);
 
 		wi.current.dataBox = contentBox;
 		wi.current.element = domToInspect;
 	},
 
-	calculateDataBoxPosition : function(contentBox, domToInspect) {
-		var position = domToInspect.offset();
+	setDataBoxStyles : function(contentBox, domToInspect) {
+		var dataBox = contentBox.children('.'+wi.css.DATA_BOX_CLASS);
+		var fillerBox = contentBox.children('.'+wi.css.FILLER_BOX_CLASS);
 
-		contentBox.css({
-			top: position.top - 10,
-			left: position.left - 10
-		});
+		var windowWidth = $(window).outerWidth();
+		var windowHeight = $(window).outerHeight();
+
+		var elementWidth = domToInspect.outerWidth();
+		var elementHeight = domToInspect.outerHeight();
+
+		var boxWidth = parseInt(contentBox.css('min-width'), 10);
+		boxWidth = (elementWidth > boxWidth? elementWidth : boxWidth);
+		var boxBorder = parseInt(contentBox.css('border-width'), 10);
+
+		// Set Content Box Width
+		contentBox.css('width', boxWidth);
+
+		var boxHeight = elementHeight + contentBox.height();
+
+		var elementPosition = domToInspect.offset();
+		var boxPosition = {
+			top : elementPosition.top - boxBorder,
+			left : elementPosition.left - boxBorder,
+			right : elementPosition.left + boxWidth + boxBorder,
+			bottom : elementPosition.top + boxHeight + boxBorder
+		};
+
+		var contentBoxStyles = {};
+		var dataBoxStyles = {};
+		var fillerBoxStyles = {};
+
+		// Set Horizontal Position
+		if(boxPosition.right > windowWidth) {
+			contentBoxStyles.left = 'initial';
+			contentBoxStyles.right = windowWidth - (elementPosition.left + elementWidth + boxBorder);
+
+			fillerBoxStyles.left = 0;
+			fillerBoxStyles.right = 'initial';
+		}
+		else {
+			contentBoxStyles.left = boxPosition.left;
+			contentBoxStyles.right = 'initial';
+
+			fillerBoxStyles.left = 'initial';
+			fillerBoxStyles.right = 0;
+		}
+
+		// Set Vertical Position
+		if(boxPosition.bottom > windowHeight) {
+			contentBoxStyles.top = 'initial';
+			contentBoxStyles.bottom = windowHeight - (elementPosition.top + elementHeight + boxBorder);
+
+			dataBoxStyles.paddingTop = 0;
+			dataBoxStyles.paddingBottom = boxBorder / 2;
+			dataBoxStyles.marginTop = 0;
+			dataBoxStyles.marginBottom = elementHeight;
+
+			fillerBoxStyles.top = 'initial';
+			fillerBoxStyles.bottom = 0;
+		}
+		else {
+			contentBoxStyles.top = boxPosition.top;
+			contentBoxStyles.bottom = 'initial';
+
+			dataBoxStyles.paddingTop = boxBorder / 2;
+			dataBoxStyles.paddingBottom = 0;
+			dataBoxStyles.marginTop = elementHeight;
+			dataBoxStyles.marginBottom = 0;
+
+			fillerBoxStyles.top = 0;
+			fillerBoxStyles.bottom = 'initial';
+		}
+
+		// Set Filler Box Width and Height
+		if(boxWidth > elementWidth) {
+			fillerBoxStyles.width = boxWidth - elementWidth;
+			fillerBoxStyles.height = elementHeight;
+			fillerBoxStyles.display = 'block';
+		}
+		else {
+			fillerBoxStyles.display = 'none';
+		}
+
+		fillerBox.css(fillerBoxStyles);
+		dataBox.css(dataBoxStyles);
+		contentBox.css(contentBoxStyles);
 	},
 
 	getMultimediaMetadata : function(domToInspect) {
