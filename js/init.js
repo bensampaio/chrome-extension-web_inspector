@@ -102,6 +102,8 @@ var wi = {
 		var dataBox = $('<div class="' + wi.css.DATA_BOX_CLASS + '"></div>');
 		var fillerBox = $('<div class="' + wi.css.FILLER_BOX_CLASS + '"></div>');
 
+		console.log(window.getComputedStyle(domToInspect[0]));
+
 		var tagName = domToInspect[0].tagName;
 		var metadata = [];
 
