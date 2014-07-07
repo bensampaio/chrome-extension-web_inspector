@@ -2,7 +2,7 @@
 
 	"manifest_version" : 2,
 	"name" : "Web Inspector",
-	"version" : "0.2",
+	"version" : "0.3",
 	"author" : "Bruno Sampaio",
 
 	"default_locale" : "en",

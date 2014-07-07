@@ -1,10 +1,6 @@
 var currentIcons = {};
 
-var resetTabIcon = function(tabId) {
-	currentIcons[tabId] = false;
-}
-
-chrome.browserAction.onClicked.addListener(function(tab) {
+var toggleIcon = function(tab) {
 	var tabId = tab.id;
 
 	if(!(tabId in currentIcons)) {
@@ -18,7 +14,14 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 	chrome.tabs.executeScript({
 		code: 'wi.current.toggleStatus()'
 	});
-});
+}
+
+var resetTabIcon = function(tabId) {
+	currentIcons[tabId] = false;
+}
+
+// When extension icon is clicked
+chrome.browserAction.onClicked.addListener(toggleIcon);
 
 // When a new tab is created initializes its properties
 chrome.tabs.onCreated.addListener(function(tab) {
@@ -33,4 +36,15 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 // When a tab is removed removes its properties
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
 	currentIcons[tabId] = null;
+});
+
+// When the extension interacts with the background page
+chrome.extension.onRequest.addListener(function(request, sender) {
+	if(request && typeof request.action !== 'undefined' && sender && typeof sender.tab !== 'undefined') {
+		switch(request.action) {
+			case 'toggleIcon':
+				toggleIcon(sender.tab);
+			break;
+		}
+	}
 });

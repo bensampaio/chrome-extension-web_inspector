@@ -49,7 +49,9 @@ var wi = {
 				[toggleEvent]('DOMNodeInserted', wi.events.elementCreated);
 
 			// Move Data Box on scroll
-			$(window)[toggleEvent]('resize scroll', wi.events.windowResizeOrScroll);
+			$(window)
+				[toggleEvent]('keydown', wi.events.keyPress)
+				[toggleEvent]('resize scroll', wi.events.windowResizeOrScroll);
 		}
 	},
 
@@ -126,6 +128,17 @@ var wi = {
 
 				// Add new box
 				wi.box.add($(event.target));
+			}
+		},
+
+		keyPress : function(event) {
+			console.log(event.keyCode);
+			if(wi.current.active) {
+
+				// If 'ESC' is pressed send request to the background page
+				if(event.keyCode == 27) {
+					chrome.extension.sendRequest({ 'action' : 'toggleIcon' });
+				}
 			}
 		},
 
