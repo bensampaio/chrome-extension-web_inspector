@@ -1,23 +1,23 @@
-var currentIcon = {};
+var currentIcons = {};
 
 var resetTabIcon = function(tabId) {
-	currentIcon[tabId] = -1;
+	currentIcons[tabId] = false;
 }
 
 chrome.browserAction.onClicked.addListener(function(tab) {
 	var tabId = tab.id;
 
-	if(!(tabId in currentIcon)) {
+	if(!(tabId in currentIcons)) {
 		resetTabIcon(tabId);
 	}
 
-	chrome.browserAction.setIcon({ path : "img/icon_" + (currentIcon[tabId] > 0? "inactive" : "active") + '.png', tabId : tabId });
+	currentIcons[tabId] = !currentIcons[tabId];
+
+	chrome.browserAction.setIcon({ path : "img/icon_" + (currentIcons[tabId]? "active" : "inactive") + '.png', tabId : tabId });
 
 	chrome.tabs.executeScript({
-		code: 'wi.toggleStatus()'
+		code: 'wi.current.toggleStatus()'
 	});
-
-	currentIcon[tabId]*= -1;
 });
 
 // When a new tab is created initializes its properties
@@ -32,5 +32,5 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
 // When a tab is removed removes its properties
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
-	delete currentIcon[tabId];
+	currentIcons[tabId] = null;
 });

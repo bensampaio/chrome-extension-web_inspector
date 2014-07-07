@@ -1,8 +1,8 @@
-.chrome-extension-wi-active .chrome-extension-wi-element {
+.chrome-extension-wi-element {
 	cursor: -webkit-zoom-in !important;
 }
 
-.chrome-extension-wi-active .chrome-extension-wi-element:hover {
+.chrome-extension-wi-element:hover {
 	background-color: #F8F8F8;
 }
 
