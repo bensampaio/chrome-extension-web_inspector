@@ -2,6 +2,7 @@ var wi = {
 
 	css : {
 		ELEMENT : 'chrome-extension-wi-element',
+		CLOSE_BUTTON : 'chrome-extension-wi-close_button',
 		CONTENT_BOX_CLASS : 'chrome-extension-wi-content_box',
 		DATA_BOX_CLASS : 'chrome-extension-wi-data_box',
 		DATA_FIELD : 'chrome-extension-wi-data_field',
@@ -156,21 +157,12 @@ var wi = {
 			var contentBox = $('<div class="' + wi.css.CONTENT_BOX_CLASS + '"></div>');
 			var dataBox = $('<div class="' + wi.css.DATA_BOX_CLASS + '"></div>');
 			var fillerBox = $('<div class="' + wi.css.FILLER_BOX_CLASS + '"></div>');
+			var closeButton = $('<div class="' + wi.css.CLOSE_BUTTON + '">X</div>');
 
-			var tagName = elementToInspect[0].tagName;
-			var metadata = [];
+			// Get Element Metadata
+			var metadata = this.getMetadata(elementToInspect);
 
 			// Set Data Box Content
-			if(wi.elements.MULTIMEDIA.indexOf(tagName) != -1) {
-				metadata = this.getMultimediaMetadata(elementToInspect);
-			}
-			else if(wi.elements.REFERENCE.indexOf(tagName) != -1) {
-				metadata = this.getReferenceMetadata(elementToInspect);
-			}
-			else if(wi.elements.TEXT.indexOf(tagName) != -1) {
-				metadata = this.getTextMetadata(elementToInspect);
-			}
-
 			var htmlMetadata = '<form>';
 			for(var i = 0; i < metadata.length; i++) {
 				var field = metadata[i];
@@ -192,8 +184,11 @@ var wi = {
 				event.stopPropagation();
 			});
 
+			closeButton.on('click', wi.events.documentClicked);
+
 			// Add Data Box to the Content Box
 			dataBox.append(htmlMetadata);
+			contentBox.append(closeButton);
 			contentBox.append(dataBox);
 			contentBox.append(fillerBox);
 
@@ -207,38 +202,49 @@ var wi = {
 			wi.current.element = elementToInspect;
 		},
 
-		getMultimediaMetadata : function(elementToInspect) {
-			var source = wi.utils.parseSourceURL(elementToInspect[0].getAttribute('src') || elementToInspect.children('source')[0].getAttribute('src'));
+		getMetadata : function(elementToInspect) {
+			var textMetadata = [];
+			var refMetadata = [];
+			var multimediaMetadata = [];
 
-			return [
-				{ id : 'width', label : chrome.i18n.getMessage("fieldWidthLabel"), value : elementToInspect.width() + 'px' },
-				{ id : 'height', label : chrome.i18n.getMessage("fieldHeightLabel"), value : elementToInspect.height() + 'px' },
-				{ id : 'src', label : chrome.i18n.getMessage("fieldSourceLabel"), value : source },
-				{ id : 'desc', label : chrome.i18n.getMessage("fieldDescLabel"), value : elementToInspect.attr('alt') }
-			]
-		},
-
-		getReferenceMetadata : function(elementToInspect) {
-			var source = wi.utils.parseSourceURL(elementToInspect[0].getAttribute('href') || elementToInspect[0].getAttribute('src'));
-
-			return this.getTextMetadata(elementToInspect).concat([
-				{ id : 'src', label : chrome.i18n.getMessage("fieldSourceLabel"), value : source },
-				{ id : 'lang', label : chrome.i18n.getMessage("fieldLangLabel"), value : elementToInspect.attr('hreflang') }
-			])
-		},
-
-		getTextMetadata : function(elementToInspect) {
+			var tagName = elementToInspect[0].tagName;
+			var text = elementToInspect.text();
 			var textColor = wi.utils.parseColor(elementToInspect.css('color'));
 			var backgroundColor = wi.utils.parseColor(elementToInspect.css('background-color'));
 			var backgroundImage = wi.utils.parseBackgroundImage(elementToInspect.css('background-image'));
+			var href = wi.utils.parseSourceURL(elementToInspect.attr('href'));
+			var source = wi.utils.parseSourceURL(elementToInspect.attr('src') || elementToInspect.children('source').attr('src'));
 
-			return [
-				{ id : 'font', label : chrome.i18n.getMessage("fieldFontLabel"), value : elementToInspect.css('font-family') },
-				{ id : 'fsize', label : chrome.i18n.getMessage("fieldFSizeLabel"), value : elementToInspect.css('font-size') },
-				{ id : 'text-color', label : chrome.i18n.getMessage("fieldTextColorLabel"), value : textColor },
-				{ id : 'background-color', label : chrome.i18n.getMessage("fieldBackgroundColorLabel"), value : backgroundColor },
-				{ id : 'image-src', label : chrome.i18n.getMessage("fieldBackgroundImageLabel"), value : backgroundImage }
-			]
+			// Set Text Metadata
+			if(text && typeof text === 'string') {
+				textMetadata = [
+					{ id : 'font', label : chrome.i18n.getMessage("fieldFontLabel"), value : elementToInspect.css('font-family') },
+					{ id : 'fsize', label : chrome.i18n.getMessage("fieldFSizeLabel"), value : elementToInspect.css('font-size') },
+					{ id : 'text-color', label : chrome.i18n.getMessage("fieldTextColorLabel"), value : textColor },
+					{ id : 'background-color', label : chrome.i18n.getMessage("fieldBackgroundColorLabel"), value : backgroundColor },
+					{ id : 'image-src', label : chrome.i18n.getMessage("fieldBackgroundImageLabel"), value : backgroundImage }
+				];
+			}
+
+			// Set Reference Metadata
+			if(wi.elements.REFERENCE.indexOf(tagName) != -1) {
+				refMetadata = [
+					{ id : 'src', label : chrome.i18n.getMessage("fieldSourceLabel"), value : href || source },
+					{ id : 'lang', label : chrome.i18n.getMessage("fieldLangLabel"), value : elementToInspect.attr('hreflang') }
+				];
+			}
+
+			// Set Multimedia Metadata
+			if(wi.elements.MULTIMEDIA.indexOf(tagName) != -1) {
+				multimediaMetadata = [
+					{ id : 'width', label : chrome.i18n.getMessage("fieldWidthLabel"), value : elementToInspect.width() + 'px' },
+					{ id : 'height', label : chrome.i18n.getMessage("fieldHeightLabel"), value : elementToInspect.height() + 'px' },
+					{ id : 'src', label : chrome.i18n.getMessage("fieldSourceLabel"), value : source },
+					{ id : 'desc', label : chrome.i18n.getMessage("fieldDescLabel"), value : elementToInspect.attr('alt') }
+				];
+			}
+
+			return [].concat(textMetadata).concat(refMetadata).concat(multimediaMetadata);
 		},
 
 		setStyles : function(contentBox, elementToInspect) {
@@ -246,7 +252,7 @@ var wi = {
 			var fillerBox = contentBox.children('.'+wi.css.FILLER_BOX_CLASS);
 
 			var windowWidth = $(window).outerWidth();
-			var windowHeight = $(window).outerHeight();
+			var windowHeight = $(document).outerHeight();
 
 			var elementWidth = elementToInspect.outerWidth();
 			var elementHeight = elementToInspect.outerHeight();
@@ -344,12 +350,12 @@ var wi = {
 		},
 
 		parseBackgroundImage : function(str) {
-			return str == 'none'? '' : this.parseSourceURL(str.replace('url(','').replace(')',''))
+			return str.substr(0,3) == 'url'? this.parseSourceURL(str.replace('url(','').replace(')','')) : '';
 		},
 
 		parseSourceURL : function(str) {
 			if(str && str.indexOf('://') == -1) {
-				str = window.location.protocol + '//' + window.location.host + (window.location.port? ':' + window.location.port : '' ) + '/' + str;
+				str = window.location.protocol + '//' + window.location.host + (window.location.port? ':' + window.location.port : '' ) + (str.charAt(0) == '/'? '' : '/') + str;
 			}
 
 			return str;

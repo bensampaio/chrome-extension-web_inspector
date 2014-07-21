@@ -31,6 +31,28 @@
 	z-index: 10000;
 }
 
+.chrome-extension-wi-content_box > .chrome-extension-wi-close_button {
+	font-size: 10px;
+	line-height: 2em;
+	width: 2em;
+	height: 2em;
+	top: -2em;
+	right: -2em;
+	text-align: center;
+	border: 2px solid #FFF;
+	background-color: #000;
+	-webkit-border-radius: 2em;
+	-moz-border-radius: 2em;
+	border-radius: 2em;
+	color: #FFF;
+	position: absolute;
+	cursor: pointer;
+}
+
+.chrome-extension-wi-content_box > .chrome-extension-wi-close_button:hover {
+	background-color: #444;
+}
+
 .chrome-extension-wi-content_box > .chrome-extension-wi-data_box,
 .chrome-extension-wi-content_box > .chrome-extension-wi-filler_box {
 	padding: 0;
