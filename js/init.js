@@ -2,7 +2,7 @@ var wi = {
 
 	css : {
 		ELEMENT : 'chrome-extension-wi-element',
-		CLOSE_BUTTON : 'chrome-extension-wi-close_button',
+		CLOSE_BUTTON_CLASS : 'chrome-extension-wi-close_button',
 		CONTENT_BOX_CLASS : 'chrome-extension-wi-content_box',
 		DATA_BOX_CLASS : 'chrome-extension-wi-data_box',
 		DATA_FIELD : 'chrome-extension-wi-data_field',
@@ -157,7 +157,7 @@ var wi = {
 			var contentBox = $('<div class="' + wi.css.CONTENT_BOX_CLASS + '"></div>');
 			var dataBox = $('<div class="' + wi.css.DATA_BOX_CLASS + '"></div>');
 			var fillerBox = $('<div class="' + wi.css.FILLER_BOX_CLASS + '"></div>');
-			var closeButton = $('<div class="' + wi.css.CLOSE_BUTTON + '">X</div>');
+			var closeButton = $('<div class="' + wi.css.CLOSE_BUTTON_CLASS + '">X</div>');
 
 			// Get Element Metadata
 			var metadata = this.getMetadata(elementToInspect);
@@ -221,8 +221,7 @@ var wi = {
 					{ id : 'font', label : chrome.i18n.getMessage("fieldFontLabel"), value : elementToInspect.css('font-family') },
 					{ id : 'fsize', label : chrome.i18n.getMessage("fieldFSizeLabel"), value : elementToInspect.css('font-size') },
 					{ id : 'text-color', label : chrome.i18n.getMessage("fieldTextColorLabel"), value : textColor },
-					{ id : 'background-color', label : chrome.i18n.getMessage("fieldBackgroundColorLabel"), value : backgroundColor },
-					{ id : 'image-src', label : chrome.i18n.getMessage("fieldBackgroundImageLabel"), value : backgroundImage }
+					{ id : 'background-color', label : chrome.i18n.getMessage("fieldBackgroundColorLabel"), value : backgroundColor }
 				];
 			}
 
@@ -235,12 +234,13 @@ var wi = {
 			}
 
 			// Set Multimedia Metadata
-			if(wi.elements.MULTIMEDIA.indexOf(tagName) != -1) {
+			if(wi.elements.MULTIMEDIA.indexOf(tagName) != -1 || backgroundImage) {
 				multimediaMetadata = [
 					{ id : 'width', label : chrome.i18n.getMessage("fieldWidthLabel"), value : elementToInspect.width() + 'px' },
 					{ id : 'height', label : chrome.i18n.getMessage("fieldHeightLabel"), value : elementToInspect.height() + 'px' },
 					{ id : 'src', label : chrome.i18n.getMessage("fieldSourceLabel"), value : source },
-					{ id : 'desc', label : chrome.i18n.getMessage("fieldDescLabel"), value : elementToInspect.attr('alt') }
+					{ id : 'desc', label : chrome.i18n.getMessage("fieldDescLabel"), value : elementToInspect.attr('alt') },
+					{ id : 'image-src', label : chrome.i18n.getMessage("fieldBackgroundImageLabel"), value : backgroundImage }
 				];
 			}
 
@@ -250,9 +250,12 @@ var wi = {
 		setStyles : function(contentBox, elementToInspect) {
 			var dataBox = contentBox.children('.'+wi.css.DATA_BOX_CLASS);
 			var fillerBox = contentBox.children('.'+wi.css.FILLER_BOX_CLASS);
+			var closeButton = contentBox.children('.'+wi.css.CLOSE_BUTTON_CLASS);
+
+			var documentHeight = $(document).outerHeight();
 
 			var windowWidth = $(window).outerWidth();
-			var windowHeight = $(document).outerHeight();
+			var windowHeight = $(window).outerHeight();
 
 			var elementWidth = elementToInspect.outerWidth();
 			var elementHeight = elementToInspect.outerHeight();
@@ -285,6 +288,8 @@ var wi = {
 
 				fillerBoxStyles.left = 0;
 				fillerBoxStyles.right = 'initial';
+
+				closeButton.addClass('top left');
 			}
 			else {
 				contentBoxStyles.left = boxPosition.left;
@@ -292,10 +297,12 @@ var wi = {
 
 				fillerBoxStyles.left = 'initial';
 				fillerBoxStyles.right = 0;
+
+				closeButton.addClass('top right');
 			}
 
 			// Set Vertical Position
-			if(boxPosition.bottom > windowHeight) {
+			if(boxPosition.bottom > documentHeight) {
 				contentBoxStyles.top = 'initial';
 				contentBoxStyles.bottom = windowHeight - (elementPosition.top + elementHeight + boxBorder);
 
