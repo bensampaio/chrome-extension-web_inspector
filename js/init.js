@@ -2,11 +2,12 @@ var wi = {
 
 	css : {
 		ELEMENT : 'chrome-extension-wi-element',
+		COLOR_SELECT_CLASS : 'chrome-extension-wi-color_select',
 		CLOSE_BUTTON_CLASS : 'chrome-extension-wi-close_button',
 		CONTENT_BOX_CLASS : 'chrome-extension-wi-content_box',
 		DATA_BOX_CLASS : 'chrome-extension-wi-data_box',
 		DATA_FIELD : 'chrome-extension-wi-data_field',
-		FILLER_BOX_CLASS : 'chrome-extension-wi-filler_box' 
+		FILLER_BOX_CLASS : 'chrome-extension-wi-filler_box',
 	},
 	
 	current : {
@@ -53,7 +54,7 @@ var wi = {
 			$(window)
 				[toggleEvent]('keydown', wi.events.keyPress)
 				[toggleEvent]('resize scroll', wi.events.windowResizeOrScroll);
-		}
+		},
 	},
 
 	elements : {
@@ -89,7 +90,7 @@ var wi = {
 			this.selector = this.REFERENCE.join(',') + ',' + this.TEXT.join(',') + ',' + this.MULTIMEDIA.join(',');
 			this.containers = this.CONTENT.join(',');
 			this.filter = ':not(:has(' + this.containers + '))';
-		}
+		},
 	},
 
 	events : {
@@ -147,7 +148,7 @@ var wi = {
 			if(wi.current.active && wi.current.contentBox.length > 0 && wi.current.element.length > 0) {
 				wi.box.setStyles(wi.current.contentBox, wi.current.element);
 			}
-		}
+		},
 
 	},
 
@@ -174,15 +175,41 @@ var wi = {
 								'<a href="' + field.value + '" target="_blank">' + field.value + '</a>' :
 								'<span>' + field.value + '</span>'
 							) +
+							(field.id.indexOf('color') != -1?
+								'<select class="' + wi.css.COLOR_SELECT_CLASS + '"><option value="hex">HEX</option><option value="rgb" selected>RGB</option></select>' :
+								''
+							) +
 						'</div>';
 				}
 			}
 			htmlMetadata+= '<form>';
 
 			// Set Content Box Events
-			contentBox.on('click', function(event) {
-				event.stopPropagation();
-			});
+			contentBox
+				.on('click', function(event) {
+					event.stopPropagation();
+				})
+				.on('change', 'select.'+wi.css.COLOR_SELECT_CLASS, function(event) {
+					var $select = $(this);
+					var $field = $select.prev();
+
+					var colorType = $select.val();
+					var rgbValue = $field.data('rgb') || $field.text();
+					var hexValue = $field.data('hex') || wi.utils.colors.rgb2hex(rgbValue);
+
+					// Set values
+					$field.data({ rgb: rgbValue, hex: hexValue });
+
+					switch(colorType) {
+						case 'rgb':
+							$field.text(rgbValue);
+						break;
+
+						case 'hex':
+							$field.text(hexValue)
+						break;
+					}
+				});
 
 			closeButton.on('click', wi.events.documentClicked);
 
@@ -218,29 +245,29 @@ var wi = {
 			// Set Text Metadata
 			if(text && typeof text === 'string') {
 				textMetadata = [
-					{ id : 'font', label : chrome.i18n.getMessage("fieldFontLabel"), value : elementToInspect.css('font-family') },
-					{ id : 'fsize', label : chrome.i18n.getMessage("fieldFSizeLabel"), value : elementToInspect.css('font-size') },
-					{ id : 'text-color', label : chrome.i18n.getMessage("fieldTextColorLabel"), value : textColor },
-					{ id : 'background-color', label : chrome.i18n.getMessage("fieldBackgroundColorLabel"), value : backgroundColor }
+					{ id : 'font', label : chrome.i18n.getMessage('fieldFontLabel'), value : elementToInspect.css('font-family') },
+					{ id : 'fsize', label : chrome.i18n.getMessage('fieldFSizeLabel'), value : elementToInspect.css('font-size') },
+					{ id : 'text-color', label : chrome.i18n.getMessage('fieldTextColorLabel'), value : textColor },
+					{ id : 'background-color', label : chrome.i18n.getMessage('fieldBackgroundColorLabel'), value : backgroundColor }
 				];
 			}
 
 			// Set Reference Metadata
 			if(wi.elements.REFERENCE.indexOf(tagName) != -1) {
 				refMetadata = [
-					{ id : 'src', label : chrome.i18n.getMessage("fieldSourceLabel"), value : href || source },
-					{ id : 'lang', label : chrome.i18n.getMessage("fieldLangLabel"), value : elementToInspect.attr('hreflang') }
+					{ id : 'src', label : chrome.i18n.getMessage('fieldSourceLabel'), value : href || source },
+					{ id : 'lang', label : chrome.i18n.getMessage('fieldLangLabel'), value : elementToInspect.attr('hreflang') }
 				];
 			}
 
 			// Set Multimedia Metadata
 			if(wi.elements.MULTIMEDIA.indexOf(tagName) != -1 || backgroundImage) {
 				multimediaMetadata = [
-					{ id : 'width', label : chrome.i18n.getMessage("fieldWidthLabel"), value : elementToInspect.width() + 'px' },
-					{ id : 'height', label : chrome.i18n.getMessage("fieldHeightLabel"), value : elementToInspect.height() + 'px' },
-					{ id : 'src', label : chrome.i18n.getMessage("fieldSourceLabel"), value : source },
-					{ id : 'desc', label : chrome.i18n.getMessage("fieldDescLabel"), value : elementToInspect.attr('alt') },
-					{ id : 'image-src', label : chrome.i18n.getMessage("fieldBackgroundImageLabel"), value : backgroundImage }
+					{ id : 'width', label : chrome.i18n.getMessage('fieldWidthLabel'), value : elementToInspect.width() + 'px' },
+					{ id : 'height', label : chrome.i18n.getMessage('fieldHeightLabel'), value : elementToInspect.height() + 'px' },
+					{ id : 'src', label : chrome.i18n.getMessage('fieldSourceLabel'), value : source },
+					{ id : 'desc', label : chrome.i18n.getMessage('fieldDescLabel'), value : elementToInspect.attr('alt') },
+					{ id : 'image-src', label : chrome.i18n.getMessage('fieldBackgroundImageLabel'), value : backgroundImage }
 				];
 			}
 
@@ -346,11 +373,29 @@ var wi = {
 		remove : function() {
 			wi.current.contentBox.remove();
 			wi.current.element = $();
-		}
+		},
 
 	},
 
 	utils : {
+
+		colors : {
+			rgbRegex: /^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/,
+			hexDigits : ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'],
+
+			isRgb: function(color) {
+				return rgb.match(this.rgbRegex).length === 4;
+			},
+
+			rgb2hex: function(rgb) {
+				rgb = rgb.match(this.rgbRegex);
+				return '#' + this.hex(rgb[1]) + this.hex(rgb[2]) + this.hex(rgb[3]);
+			},
+
+			hex: function(x) {
+				return isNaN(x) ? '00' : this.hexDigits[(x - x % 16) / 16] + this.hexDigits[x % 16];
+			},
+		},
 
 		parseColor : function(str) {
 			return str == 'transparent'? '' : str;
@@ -366,7 +411,7 @@ var wi = {
 			}
 
 			return str;
-		}
+		},
 
 	}
 

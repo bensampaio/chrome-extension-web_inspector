@@ -127,3 +127,7 @@
 	text-decoration: underline;
 	cursor: pointer;
 }
+
+.chrome-extension-wi-content_box .chrome-extension-wi-color_select {
+	margin-left: 10px;
+}

@@ -3,7 +3,7 @@
 	"manifest_version" : 2,
 	"name" : "Web Inspector",
 	"short_name" : "WI",
-	"version" : "0.4.1",
+	"version" : "0.4.2",
 	"author" : "Bruno Sampaio",
 
 	"default_locale" : "en",
@@ -15,7 +15,7 @@
 	},
 
 	"background" : {
-		"scripts" : [ "js/background.js" ]
+		"scripts" : [ "dist/background.min.js" ]
 	},
 
 	"browser_action" : {
@@ -26,8 +26,8 @@
 	"content_scripts" : [
 		{
 			"matches" : [ "http://*/*", "https://*/*" ],
-			"css" : [ "css/general.css" ],
-			"js" : [ "js/jquery.js", "js/init.js" ]
+			"css" : [ "dist/general.min.css" ],
+			"js" : [ "dist/jquery.min.js", "dist/init.min.js" ]
 		}
 	],
 

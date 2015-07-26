@@ -1,0 +1,9 @@
+{
+  "name": "chrome-extension-web_inspector",
+  "version": "1.0.1",
+  "main": "js/init.js",
+  "dependencies": {
+    "jquery": "^2.0.0"
+  },
+  "private": true
+}
