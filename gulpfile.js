@@ -1,27 +1,25 @@
 // Modules
-var
-	gulp = require('gulp'),
-	rename = require('gulp-rename'),
-	uglifycss = require('gulp-uglifycss'),
-	uglifyjs = require('gulp-uglify');
+const babili = require('gulp-babili');
+const gulp = require('gulp');
+const rename = require('gulp-rename');
+const path = require('path');
+const uglifycss = require('gulp-uglifycss');
 
 // Folders
-var 
-	cssFolder = __dirname + '/css',
-	jsFolder = __dirname + '/js',
-	distFolder = __dirname + '/dist';
+const cssFolder = path.join(__dirname, 'css');
+const jsFolder = path.join(__dirname, 'js');
+const distFolder = path.join(__dirname, 'dist');
 
 // Files
-var
-	cssSrc = cssFolder + '/general.css',
-	jsBackgroundSrc = jsFolder + '/background.js',
-	jsInitSrc = jsFolder + '/init.js';
+const cssSrc = path.join(cssFolder, 'general.css');
+const jsBackgroundSrc = path.join(jsFolder, 'background.js');
+const jsInitSrc = path.join(jsFolder, 'init.js');
 
 // Default Task
 gulp.task('default', [ 'css', 'js', 'watch' ]);
 
 // CSS Task
-gulp.task('css', function() {
+gulp.task('css', () => {
 	return gulp.src(cssSrc)
 		.pipe(uglifycss())
 		.pipe(rename('general.min.css'))
@@ -31,26 +29,29 @@ gulp.task('css', function() {
 // JS Tasks
 gulp.task('js', [ 'js-copy', 'js-background', 'js-init' ]);
 
-gulp.task('js-copy', function() {
-	return gulp.src('bower_components/jquery/dist/jquery.min.js').pipe(gulp.dest(distFolder));
+gulp.task('js-copy', () => {
+	const pathToJQuery = path.join('node_modules', 'jquery', 'dist', 'jquery.min.js');
+
+	return gulp.src(pathToJQuery)
+		.pipe(gulp.dest(distFolder));
 });
 
-gulp.task('js-background', function() {
+gulp.task('js-background', () => {
 	return gulp.src(jsBackgroundSrc)
-		.pipe(uglifyjs())
+		.pipe(babili())
 		.pipe(rename('background.min.js'))
 		.pipe(gulp.dest(distFolder));
 });
 
-gulp.task('js-init', function() {
+gulp.task('js-init', () => {
 	return gulp.src(jsInitSrc)
-		.pipe(uglifyjs())
+		.pipe(babili())
 		.pipe(rename('init.min.js'))
 		.pipe(gulp.dest(distFolder));
 });
 
 // Watch Task
-gulp.task('watch', function() {
+gulp.task('watch', () => {
 	gulp.watch(cssSrc, [ 'css' ]);
 	gulp.watch(jsBackgroundSrc, [ 'js-background' ]);
 	gulp.watch(jsInitSrc, [ 'js-init' ]);

@@ -1,7 +1,7 @@
-var currentIcons = {};
+const currentIcons = {};
 
-var toggleIcon = function(tab) {
-	var tabId = tab.id;
+const toggleIcon = (tab) => {
+	const tabId = tab.id;
 
 	if(!(tabId in currentIcons)) {
 		resetTabIcon(tabId);
@@ -16,7 +16,7 @@ var toggleIcon = function(tab) {
 	});
 }
 
-var resetTabIcon = function(tabId) {
+const resetTabIcon = (tabId) => {
 	currentIcons[tabId] = false;
 }
 
@@ -24,22 +24,22 @@ var resetTabIcon = function(tabId) {
 chrome.browserAction.onClicked.addListener(toggleIcon);
 
 // When a new tab is created initializes its properties
-chrome.tabs.onCreated.addListener(function(tab) {
+chrome.tabs.onCreated.addListener((tab) => {
 	resetTabIcon(tab.id);
 });
 
 // When a tab content is updated resets its properties
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 	resetTabIcon(tabId);
 });
 
 // When a tab is removed removes its properties
-chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
+chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
 	currentIcons[tabId] = null;
 });
 
 // When the extension interacts with the background page
-chrome.extension.onRequest.addListener(function(request, sender) {
+chrome.extension.onRequest.addListener((request, sender) => {
 	if(request && typeof request.action !== 'undefined' && sender && typeof sender.tab !== 'undefined') {
 		switch(request.action) {
 			case 'toggleIcon':

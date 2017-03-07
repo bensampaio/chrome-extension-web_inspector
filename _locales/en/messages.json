@@ -1,41 +1,41 @@
 {
-	"fieldWidthLabel" : {
-		"message" : "Width"
+	"fieldWidthLabel": {
+		"message": "Width"
 	},
 
-	"fieldHeightLabel" : {
-		"message" : "Height"
+	"fieldHeightLabel": {
+		"message": "Height"
 	},
 
-	"fieldSourceLabel" : {
-		"message" : "Source"
+	"fieldSourceLabel": {
+		"message": "Source"
 	},
 
-	"fieldDescLabel" : {
-		"message" : "Description"
+	"fieldDescLabel": {
+		"message": "Description"
 	},
 
-	"fieldLangLabel" : {
-		"message" : "Language"
+	"fieldLangLabel": {
+		"message": "Language"
 	},
 
-	"fieldFontLabel" : {
-		"message" : "Font"
+	"fieldFontLabel": {
+		"message": "Font"
 	},
 
-	"fieldFSizeLabel" : {
-		"message" : "Size"
+	"fieldFSizeLabel": {
+		"message": "Size"
 	},
 
-	"fieldTextColorLabel" : {
-		"message" : "Text Color"
+	"fieldTextColorLabel": {
+		"message": "Text Color"
 	},
 
-	"fieldBackgroundColorLabel" : {
-		"message" : "Background Color"
+	"fieldBackgroundColorLabel": {
+		"message": "Background Color"
 	},
 
-	"fieldBackgroundImageLabel" : {
-		"message" : "Background Image"
+	"fieldBackgroundImageLabel": {
+		"message": "Background Image"
 	}
 }

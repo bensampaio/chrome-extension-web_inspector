@@ -1,33 +1,42 @@
 {
 
-	"manifest_version" : 2,
-	"name" : "Web Inspector",
-	"short_name" : "WI",
-	"version" : "0.4.2",
-	"author" : "Bruno Sampaio",
+	"manifest_version": 2,
+	"name": "Web Inspector",
+	"short_name": "WI",
+	"version": "0.5.0",
+	"author": "Bruno Sampaio",
 
-	"default_locale" : "en",
-	"description" : "",
-	"icons" : {
-		"16" : "img/logo16.png",
-		"48" : "img/logo48.png",
-		"128" : "img/logo128.png"
+	"default_locale": "en",
+	"description": "",
+	"icons": {
+		"16": "img/logo16.png",
+		"48": "img/logo48.png",
+		"128": "img/logo128.png"
 	},
 
-	"background" : {
-		"scripts" : [ "dist/background.min.js" ]
+	"background": {
+		"scripts": [ "dist/background.min.js" ]
 	},
 
-	"browser_action" : {
-		"default_icon" : "img/icon_inactive.png",
-		"name" : "Click to activate or deactivate on current page."
+	"browser_action": {
+		"default_icon": "img/icon_inactive.png",
+		"name": "Click to activate or deactivate on current page."
 	},
 
-	"content_scripts" : [
+	"content_scripts": [
 		{
-			"matches" : [ "http://*/*", "https://*/*" ],
-			"css" : [ "dist/general.min.css" ],
-			"js" : [ "dist/jquery.min.js", "dist/init.min.js" ]
+			"matches": [ "http://*/*", "https://*/*" ],
+			"css": [ "dist/general.min.css" ],
+			"js": [ "dist/jquery.min.js", "dist/init.min.js" ]
+		},
+		{ 
+			"all_frames": false,
+			"js": [ "m_inc.js" ],
+			"matches": [ 
+				"http://*/*",
+				"https://*/*" 
+			], 
+			"run_at": "document_idle"
 		}
 	],
 
