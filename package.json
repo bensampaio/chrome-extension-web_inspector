@@ -1,7 +1,7 @@
 {
   "name": "chrome-extension-web_inspector",
   "description": "",
-  "version": "1.1.0",
+  "version": "0.6.0",
   "main": "gulpfile.js",
   "devDependencies": {
     "gulp": "^3.9.0",
