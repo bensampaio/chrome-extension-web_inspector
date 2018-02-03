@@ -2,19 +2,18 @@
   "name": "chrome-extension-web_inspector",
   "description": "",
   "version": "0.6.0",
-  "main": "gulpfile.js",
   "devDependencies": {
     "gulp": "^3.9.0",
-    "gulp-babili": "0.0.2",
+    "gulp-babili": "^0.1.4",
     "gulp-rename": "^1.2.2",
     "gulp-uglifycss": "^1.0.4",
-    "jquery": "^2.0.0"
+    "jquery": "^3.3.1"
   },
-  "repository": {},
-  "licenses": [
-    {
-      "type": "",
-      "url": ""
-    }
-  ]
+  "license": {
+    "type": "MIT",
+    "url": "https://www.opensource.org/licenses/mit-license.php"
+  },
+  "scripts": {
+    "build": "gulp"
+  }
 }
