@@ -1,5 +1,5 @@
 // Modules
-const babili = require('gulp-babili');
+const minify = require('gulp-babel-minify');
 const gulp = require('gulp');
 const rename = require('gulp-rename');
 const path = require('path');
@@ -15,10 +15,8 @@ const cssSrc = path.join(cssFolder, 'general.css');
 const jsBackgroundSrc = path.join(jsFolder, 'background.js');
 const jsInitSrc = path.join(jsFolder, 'init.js');
 
-// Default Task
-gulp.task('default', [ 'css', 'js', 'watch' ]);
+// CSS Tasks
 
-// CSS Task
 gulp.task('css', () => {
 	return gulp.src(cssSrc)
 		.pipe(uglifycss())
@@ -27,7 +25,6 @@ gulp.task('css', () => {
 });
 
 // JS Tasks
-gulp.task('js', [ 'js-copy', 'js-background', 'js-init' ]);
 
 gulp.task('js-copy', () => {
 	const pathToJQuery = path.join('node_modules', 'jquery', 'dist', 'jquery.min.js');
@@ -38,21 +35,26 @@ gulp.task('js-copy', () => {
 
 gulp.task('js-background', () => {
 	return gulp.src(jsBackgroundSrc)
-		.pipe(babili())
+		.pipe(minify())
 		.pipe(rename('background.min.js'))
 		.pipe(gulp.dest(distFolder));
 });
 
 gulp.task('js-init', () => {
 	return gulp.src(jsInitSrc)
-		.pipe(babili())
+		.pipe(minify())
 		.pipe(rename('init.min.js'))
 		.pipe(gulp.dest(distFolder));
 });
 
+gulp.task('js', gulp.parallel('js-copy', 'js-background', 'js-init'));
+
 // Watch Task
 gulp.task('watch', () => {
-	gulp.watch(cssSrc, [ 'css' ]);
-	gulp.watch(jsBackgroundSrc, [ 'js-background' ]);
-	gulp.watch(jsInitSrc, [ 'js-init' ]);
+	gulp.watch(cssSrc, gulp.series('css'));
+	gulp.watch(jsBackgroundSrc, gulp.series('js-background'));
+	gulp.watch(jsInitSrc, gulp.series('js-init'));
 });
+
+// Default task
+gulp.task('default', gulp.parallel('css', 'js', 'watch'));
